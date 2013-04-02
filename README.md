@@ -35,7 +35,7 @@ when the sequence server try to get the sequence or range, it may be get from th
 we keep such contract in all sequence server ,so the sequence will never be duplicated.
 
 ##usage
-1.config the `sequence.properties` in `alexander\src\test\resources\conf\`
+1.checkout the code and config the `sequence.properties` in `alexander\src\test\resources\conf\`
 
 2.create the table in database you config,just like 
    
@@ -47,7 +47,7 @@ we keep such contract in all sequence server ,so the sequence will never be dupl
     PRIMARY KEY (`id`)
     )ENGINE=InnoDB
 
-3.checkout the code and assembly the package
+3.assembly the package
     
     mvn -Dtest -DfailIfNoTests=false clean package -P build
     
