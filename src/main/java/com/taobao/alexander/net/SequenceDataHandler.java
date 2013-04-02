@@ -138,10 +138,12 @@ public class SequenceDataHandler implements DataHandler {
 			} else {
 				int start1 = sql.indexOf(" cluster");
 				int end1 = sql.indexOf(" and ");
-				cluster = sql.substring(start1 + 1, end1 - 1);
+				cluster = sql.substring(start1 + " cluster='".length(),
+						end1 - 1);
 
 				int start2 = sql.indexOf(" slice");
-				slice = sql.substring(start2 + 1, sql.length() - 1);
+				slice = sql.substring(start2 + " slice='".length(),
+						sql.length() - 1);
 			}
 
 			if (cluster == null || "".equals(cluster)) {
@@ -152,6 +154,20 @@ public class SequenceDataHandler implements DataHandler {
 				slice = this.sequence.getDefaultSlice();
 			}
 
+			Map<String, String> au = this.sequence.getAuths().get(slice);
+			if (au == null) {
+				throw new RuntimeException("Access denied,no sequence named "
+						+ slice);
+			} else {
+				String user = (String) source
+						.getAttribute(FrontConnectionHandler.AUTH_USER);
+				String pass = au.get(user);
+				if (pass == null) {
+					throw new RuntimeException("Access denied,sequence "
+							+ slice + " not allow " + user + " access!");
+				}
+			}
+			
 			SRange seq = this.sequence.nextRange(cluster, slice);
 			NextRange.send(source, cluster, slice, seq);
 		} catch (Exception e) {
