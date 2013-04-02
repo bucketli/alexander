@@ -5,7 +5,7 @@
 anlexander is a distribute sequence service,use multi database generate the unique sequence but not sequential.it is high performance and failure tolerate with multi database except they are all failed.
 
 ##key note
-if we us 4 db generate the unique sequence,the snapshot value of the start time just like form
+if we us 4 db generate the unique sequence,the snapshot value of the start time just like `form1`.
 
     +-----+-----+
     | db  |value|
@@ -19,7 +19,7 @@ if we us 4 db generate the unique sequence,the snapshot value of the start time 
     | db4 | 3000|
     +-----+-----+
 
-when the sequence server try to get the sequence or range, it may be get from the db2,the value will change to 6000, this guarantee the server get the 1000-1999 without get twice.
+when the sequence server try to get the sequence or range, it may be get from the db2,the value will change to 6000, this guarantee the server get the 1000-1999 without get twice.just like `form2`.
    
     +-----+-----+
     | db  |value|
