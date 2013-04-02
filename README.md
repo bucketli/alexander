@@ -15,9 +15,9 @@ if we us 4 db generate the unique sequence,the snapshot value of the start time 
     | db2 | 1000|   form1
     +-----+-----+
     | db3 | 2000|
-	+-----+-----+
-	| db4 | 3000|
-	+-----+-----+
+    +-----+-----+
+    | db4 | 3000|
+    +-----+-----+
 
 when the sequence server try to get the sequence or range, it may be get from the db2,the value will change to 6000, this guarantee the server get the 1000-1999 without get twice.
    
@@ -35,7 +35,8 @@ when the sequence server try to get the sequence or range, it may be get from th
 we keep such contract in all sequence server ,so the sequence will never be duplicated.
 
 ##usage
-1.config the sequence.properties in classpath
+1.config the `sequence.properties` in `alexander\src\test\resources\conf\`
+
 2.create the table in database you config,just like 
    
     CREATE TABLE `sequence` (
@@ -46,7 +47,11 @@ we keep such contract in all sequence server ,so the sequence will never be dupl
     PRIMARY KEY (`id`)
     )ENGINE=InnoDB
 
-3.type the start.sh
+3.checkout the code and assembly the package
+    
+    mvn -Dtest -DfailIfNoTests=false clean package -P build
+    
+3.get the `alexander-v0.0.1-SNAPSHOT.tar.gz` package from the target,and `tar -zxvf alexander-v0.0.1-SNAPSHOT.tar.gz`,`cd xxx/bin`,type the start.sh
     
     ./start.sh
   
