@@ -6,7 +6,9 @@ import java.util.Map;
 
 import com.taobao.alexander.protocol.MySQLMessage;
 import com.taobao.alexander.protocol.MySQLPacket;
+import com.taobao.alexander.protocol.SelectUser;
 import com.taobao.alexander.protocol.SelectVersionComment;
+import com.taobao.alexander.protocol.SetHandler;
 import com.taobao.alexander.protocol.mysql.ErrorPacket;
 import com.taobao.alexander.sequence.SRange;
 import com.taobao.alexander.sequence.impl.ClustedSequenceService;
@@ -72,6 +74,10 @@ public class SequenceDataHandler implements DataHandler {
 			handleNextRange(sql, 19, session);
 		} else if (sql.startsWith("select @@version_comment")) {
 			SelectVersionComment.response(session);
+		} else if (sql.startsWith("set ")){
+			SetHandler.response(sql, session);
+		} else if (sql.startsWith("select USER()")){
+			SelectUser.response(session);
 		} else {
 			writeErrMessage(session, (byte) 1, ER_UNKNOWN_COM_ERROR,
 					"only support 'select next_val()' or 'select next_range()'");
