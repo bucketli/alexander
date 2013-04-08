@@ -42,6 +42,12 @@ public class Configure {
 				prop.load(is);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
+			} finally{
+				try {
+					is.close();
+				} catch (IOException e) {
+					//ignore
+				}
 			}
 
 			String clusters = prop.getProperty("clusters");
