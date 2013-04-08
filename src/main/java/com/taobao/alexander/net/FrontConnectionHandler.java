@@ -1,6 +1,5 @@
 package com.taobao.alexander.net;
 
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -36,6 +35,7 @@ public class FrontConnectionHandler extends HandlerAdapter {
 	public static final String DATA_HANDLER = "DATA_HANDLER";
 	public static final String SERVER_VERSION = "5.1.48-sequence-1.2.3";
 	public static final String AUTH_USER = "AUTH_USER";
+	public static final String DEFAULT_SERVER_CHARSET_NAME = "utf-8";
 	public AtomicLong id = new AtomicLong(0);
 	public final ClustedSequenceService sequence;
 
@@ -65,8 +65,8 @@ public class FrontConnectionHandler extends HandlerAdapter {
 			hs.seed = rand1;
 			hs.serverCapabilities = FrontConnectionHelper
 					.getServerCapabilities();
-			hs.serverCharsetIndex = (byte) (CharsetUtil.getIndex(Charset
-					.defaultCharset().name()) & 0xff);
+			hs.serverCharsetIndex = (byte) (CharsetUtil
+					.getIndex(DEFAULT_SERVER_CHARSET_NAME) & 0xff);
 			hs.serverStatus = 2;
 			hs.restOfScrambleBuff = rand2;
 			session.write(hs.encode().flip());
@@ -172,5 +172,10 @@ public class FrontConnectionHandler extends HandlerAdapter {
 		}
 
 		return true;
+	}
+
+	@Override
+	public void onExceptionCaught(Session session, Throwable throwable) {
+		log.error(throwable);
 	}
 }

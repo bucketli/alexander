@@ -39,13 +39,12 @@ public class SequenceServer{
 		conf.setDispatchMessageThreadCount(Runtime.getRuntime().availableProcessors()-1);
 		//not to check the session timeout
 		conf.setSessionIdleTimeout(0);
-		conf.setSessionReadBufferSize(512);
+//		conf.setSessionReadBufferSize();
 		
 		InputStream is=SequenceServer.class.getClassLoader().getResourceAsStream(SERVER_CONFIG_FILE_NAME);
 		if(is==null){
 			is=ClassLoader.getSystemResourceAsStream(SERVER_CONFIG_FILE_NAME);
 		}
-		
 		
 		if(is!=null){
 			Properties prop=new Properties();

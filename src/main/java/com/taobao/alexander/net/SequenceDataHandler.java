@@ -6,9 +6,12 @@ import java.util.Map;
 
 import com.taobao.alexander.protocol.MySQLMessage;
 import com.taobao.alexander.protocol.MySQLPacket;
+import com.taobao.alexander.protocol.SelectTxIsolation;
 import com.taobao.alexander.protocol.SelectUser;
 import com.taobao.alexander.protocol.SelectVersionComment;
 import com.taobao.alexander.protocol.SetHandler;
+import com.taobao.alexander.protocol.ShowCollation;
+import com.taobao.alexander.protocol.ShowVariables;
 import com.taobao.alexander.protocol.mysql.ErrorPacket;
 import com.taobao.alexander.sequence.SRange;
 import com.taobao.alexander.sequence.impl.ClustedSequenceService;
@@ -72,12 +75,19 @@ public class SequenceDataHandler implements DataHandler {
 			handleNextVal(sql, 17, session);
 		} else if (sql.trim().toLowerCase().startsWith("select next_range()")) {
 			handleNextRange(sql, 19, session);
-		} else if (sql.startsWith("select @@version_comment")) {
+		} else if (sql.startsWith("select @@version_comment")
+				|| sql.startsWith("SELECT @@version_comment")) {
 			SelectVersionComment.response(session);
-		} else if (sql.startsWith("set ")){
+		} else if (sql.startsWith("SELECT @@session.tx_isolation")) {
+			SelectTxIsolation.response(session);
+		} else if (sql.startsWith("set ") || sql.startsWith("SET ")) {
 			SetHandler.response(sql, session);
-		} else if (sql.startsWith("select USER()")){
+		} else if (sql.startsWith("select USER()")) {
 			SelectUser.response(session);
+		} else if (sql.startsWith("/* mysql-connector-java")) {
+			ShowVariables.response(session);
+		} else if (sql.startsWith("SHOW COLLATION")) {
+			ShowCollation.response(session);
 		} else {
 			writeErrMessage(session, (byte) 1, ER_UNKNOWN_COM_ERROR,
 					"only support 'select next_val()' or 'select next_range()'");
@@ -124,7 +134,7 @@ public class SequenceDataHandler implements DataHandler {
 							+ slice + " not allow " + user + " access!");
 				}
 			}
-			
+
 			long seq = this.sequence.nextVal(cluster, slice);
 			NextVal.send(source, cluster, slice, seq);
 		} catch (Exception e) {
@@ -173,7 +183,7 @@ public class SequenceDataHandler implements DataHandler {
 							+ slice + " not allow " + user + " access!");
 				}
 			}
-			
+
 			SRange seq = this.sequence.nextRange(cluster, slice);
 			NextRange.send(source, cluster, slice, seq);
 		} catch (Exception e) {
