@@ -46,7 +46,7 @@ public class SelectUser {
 	}
 
 	public static void response(Session c) {
-		IoBuffer buffer = IoBuffer.allocate(10);
+		IoBuffer buffer = IoBuffer.allocate(128);
 		buffer.setAutoExpand(true);
 		buffer.setAutoShrink(true);
 		buffer = header.encode(buffer);

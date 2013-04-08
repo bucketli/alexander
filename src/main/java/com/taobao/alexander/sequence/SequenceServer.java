@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 
 import com.taobao.alexander.net.FrontConnectionHandler;
 import com.taobao.alexander.sequence.impl.ClustedSequenceService;
+import com.taobao.gecko.core.config.Configuration;
 import com.taobao.gecko.core.nio.TCPController;
 
 /**
@@ -22,7 +23,14 @@ public class SequenceServer{
 		ClustedSequenceService sequence = new ClustedSequenceService();
 		sequence.init();
 		FrontConnectionHandler handler=new FrontConnectionHandler(sequence);
-		TCPController controller=new TCPController();
+		Configuration conf=new Configuration();
+		conf.setReadThreadCount(Runtime.getRuntime().availableProcessors()-1);
+		conf.setWriteThreadCount(Runtime.getRuntime().availableProcessors()-1);
+		conf.setDispatchMessageThreadCount(Runtime.getRuntime().availableProcessors()-1);
+		conf.setWriteThreadCount(Runtime.getRuntime().availableProcessors()-1);
+		//not to check the session timeout
+		conf.setSessionIdleTimeout(0);
+		TCPController controller=new TCPController(conf);
 		controller.setLocalSocketAddress(new InetSocketAddress(8507));
 		controller.setHandler(handler);
 		controller.start();

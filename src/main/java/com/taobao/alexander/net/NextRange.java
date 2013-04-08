@@ -1,5 +1,8 @@
 package com.taobao.alexander.net;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.taobao.alexander.protocol.Fields;
 import com.taobao.alexander.protocol.mysql.EOFPacket;
 import com.taobao.alexander.protocol.mysql.FieldPacket;
@@ -17,11 +20,13 @@ import com.taobao.gecko.core.core.Session;
  * @date 2012-10-10下午06:44:20
  */
 public class NextRange {
+	public static Log log=LogFactory.getLog(NextRange.class);
 	private static final int FIELD_COUNT = 4;
 	private static final ResultSetHeaderPacket header = PacketUtil
 			.getHeader(FIELD_COUNT);
 	private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
 	private static final EOFPacket eof = new EOFPacket();
+	public static final int NEXT_RANGE_MAX_PACKAGE_SIZE=231;//5(header)+8(extra)+124(fields)+9(eof)+30(max clustername)+30(max slicename)+8(start,64bit)+8(end,64bit)+9(eof);
 
 	static {
 		int i = 0;
@@ -44,9 +49,7 @@ public class NextRange {
 	}
 
 	public static void send(Session c, String cluster, String slice,SRange r) {
-		IoBuffer buffer = IoBuffer.allocate(5);
-		buffer.setAutoExpand(true);
-		buffer.setAutoShrink(true);
+		IoBuffer buffer = IoBuffer.allocate(NextRange.NEXT_RANGE_MAX_PACKAGE_SIZE);
 
 		// write header
 		buffer = header.encode(buffer);
@@ -69,9 +72,9 @@ public class NextRange {
 		EOFPacket lastEof = new EOFPacket();
 		lastEof.packetId = ++packetId;
 		buffer = lastEof.encode(buffer);
-
 		// write buffer
-		c.write(buffer.flip());
+		buffer.flip();
+		c.write(buffer);
 	}
 
 	public static RowDataPacket getRow(String cluster, String slice, SRange s) {

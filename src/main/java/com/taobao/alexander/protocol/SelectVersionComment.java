@@ -43,7 +43,7 @@ public class SelectVersionComment {
     }
 
     public static void response(Session c) {
-        IoBuffer buffer=IoBuffer.allocate(1);
+        IoBuffer buffer=IoBuffer.allocate(128);
         buffer.setAutoExpand(true);
         buffer.setAutoShrink(true);
 
